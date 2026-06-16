@@ -268,40 +268,37 @@
      FIREBASE
 ══════════════════════════════════ -->
 <script type="module">
-  import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, limit }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { 
+    getFirestore, 
+    collection, 
+    doc, 
+    getDoc,        // ✅ ADD THIS
+    getDocs, 
+    addDoc, 
+    serverTimestamp 
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
-  /* ──────────────────────────────────────────
-     🔴 SAME CONFIG AS index.html
-  ────────────────────────────────────────── */
   const firebaseConfig = {
-  apiKey: "AIzaSyBjQ7Zv5uGHrVhQ13wixrVev-7_avdYUNI",
-  authDomain: "annuprintingpress-b17b5.firebaseapp.com",
-  projectId: "annuprintingpress-b17b5",
-  storageBucket: "annuprintingpress-b17b5.firebasestorage.app",
-  messagingSenderId: "810800291445",
-  appId: "1:810800291445:web:ea2645bf0c13520990623c"
-};
+    apiKey: "AIzaSyBjQ7Zv5uGHrVhQ13wixrVev-7_avdYUNI",
+    authDomain: "annuprintingpress-b17b5.firebaseapp.com",
+    projectId: "annuprintingpress-b17b5",
+    storageBucket: "annuprintingpress-b17b5.firebasestorage.app",
+    messagingSenderId: "810800291445",
+    appId: "1:810800291445:web:ea2645bf0c13520990623c"
+  };
 
   const firebaseApp = initializeApp(firebaseConfig);
-  const db      = getFirestore(firebaseApp);
-  const auth    = getAuth(firebaseApp);
+  const db = getFirestore(firebaseApp);
   const storage = getStorage(firebaseApp);
 
-  window.__DB      = db;
-  window.__AUTH    = auth;
+  window.__DB = db;
   window.__STORAGE = storage;
-  window.__FS      = { collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, limit };
-  window.__FA      = { signInWithEmailAndPassword, signOut, onAuthStateChanged };
+  window.__FS = { collection, doc, getDoc, getDocs, addDoc, serverTimestamp };  // ✅ getDoc added!
 
   document.dispatchEvent(new Event("firebase-ready"));
 </script>
-
 <script src="admin.js"></script>
 </body>
 </html>
