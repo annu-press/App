@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel – Annu Printing Press</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="adm-body">
+
+<!-- ══════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo">APP</div>
+      <h1 class="login-title">Admin Login</h1>
+      <p class="login-sub">Annu Printing Press — Secure Control Panel</p>
+      <div class="login-field">
+        <label>Email Address</label>
+        <input type="email" id="l-email" placeholder="admin@annuprintingpress.in" autocomplete="email">
+      </div>
+      <div class="login-field">
+        <label>Password</label>
+        <div class="pwd-wrap">
+          <input type="password" id="l-pass" placeholder="••••••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')ADMIN.login()">
+          <button class="pwd-eye" onclick="ADMIN.togglePwd()" type="button">👁</button>
+        </div>
+      </div>
+      <button class="login-btn" onclick="ADMIN.login()" id="login-btn">🔐 Login</button>
+      <div class="login-err" id="login-err"></div>
+      <p class="login-note">🔒 Yeh page sirf authorized admin ke liye hai.<br>Unauthorized access strictly prohibited.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     ADMIN SHELL
+══════════════════════════════════ -->
+<div id="admin-shell" style="display:none;">
+  <div class="adm-wrap">
+
+    <!-- SIDEBAR -->
+    <aside class="adm-sidebar" id="adm-sidebar">
+      <div class="adm-logo">
+        <div class="adm-logo-icon">APP</div>
+        <div>
+          <div class="adm-logo-name">Annu Printing Press</div>
+          <div class="adm-logo-sub">Admin Panel</div>
+        </div>
+      </div>
+
+      <nav class="adm-nav">
+        <div class="adm-nav-label">Main</div>
+        <button class="adm-link active" data-panel="dashboard" onclick="ADMIN.showPanel('dashboard')">
+          <span class="adm-icon">📊</span>Dashboard
+        </button>
+
+        <div class="adm-nav-label">Content</div>
+        <button class="adm-link" data-panel="services" onclick="ADMIN.showPanel('services')">
+          <span class="adm-icon">🛠️</span>Services
+        </button>
+        <button class="adm-link" data-panel="prices" onclick="ADMIN.showPanel('prices')">
+          <span class="adm-icon">💰</span>Price List
+        </button>
+        <button class="adm-link" data-panel="photos" onclick="ADMIN.showPanel('photos')">
+          <span class="adm-icon">📷</span>Photo Lab
+        </button>
+        <button class="adm-link" data-panel="reviews" onclick="ADMIN.showPanel('reviews')">
+          <span class="adm-icon">⭐</span>Reviews
+        </button>
+        <button class="adm-link" data-panel="enquiries" onclick="ADMIN.showPanel('enquiries')">
+          <span class="adm-icon">📩</span>Enquiries
+        </button>
+
+        <div class="adm-nav-label">Settings</div>
+        <button class="adm-link" data-panel="contact" onclick="ADMIN.showPanel('contact')">
+          <span class="adm-icon">📞</span>Contact Info
+        </button>
+        <button class="adm-link" data-panel="stats" onclick="ADMIN.showPanel('stats')">
+          <span class="adm-icon">📈</span>Statistics
+        </button>
+        <button class="adm-link" data-panel="general" onclick="ADMIN.showPanel('general')">
+          <span class="adm-icon">⚙️</span>General
+        </button>
+      </nav>
+
+      <div class="adm-footer">
+        <div class="adm-user-info" id="adm-user-info">Logged in as Admin</div>
+        <a href="index.html" class="adm-site-btn" target="_blank">🌐 Live Site Dekhein</a>
+        <button class="adm-logout" onclick="ADMIN.logout()">🚪 Logout</button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="adm-main" id="adm-main">
+      <div class="adm-topbar">
+        <div class="adm-topbar-left">
+          <button class="adm-ham" id="adm-ham" onclick="ADMIN.toggleSidebar()">☰</button>
+          <div class="adm-page-title" id="adm-page-title">Dashboard</div>
+        </div>
+        <div class="adm-topbar-right">
+          <span class="adm-live-badge">🟢 Live</span>
+          <span class="adm-time" id="adm-time"></span>
+        </div>
+      </div>
+
+      <div class="adm-content" id="adm-content">
+
+        <!-- ── DASHBOARD ── -->
+        <div class="panel active" id="panel-dashboard">
+          <div class="dash-stat-grid" id="dash-stats"></div>
+          <div class="dash-bottom">
+            <div class="dash-section">
+              <div class="dash-section-title">📩 Latest Enquiries</div>
+              <div id="dash-enquiries-list"><div class="loading-msg">Loading...</div></div>
+            </div>
+            <div class="dash-section">
+              <div class="dash-section-title">⚡ Quick Actions</div>
+              <div class="quick-actions">
+                <button class="adm-btn adm-btn-primary" onclick="ADMIN.showPanel('services');ADMIN.openModal('service')">➕ Service Add</button>
+                <button class="adm-btn adm-btn-gold" onclick="ADMIN.showPanel('prices')">💰 Price Update</button>
+                <button class="adm-btn adm-btn-outline" onclick="ADMIN.showPanel('reviews');ADMIN.openModal('review')">⭐ Review Add</button>
+                <button class="adm-btn adm-btn-outline" onclick="ADMIN.showPanel('contact')">📞 Contact Edit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SERVICES ── -->
+        <div class="panel" id="panel-services">
+          <div class="panel-toolbar">
+            <h2 class="panel-title">🛠️ Services Manage Karein</h2>
+            <button class="adm-btn adm-btn-primary" onclick="ADMIN.openModal('service')">➕ Naya Service</button>
+          </div>
+          <div class="item-list" id="adm-svc-list"></div>
+        </div>
+
+        <!-- ── PRICES ── -->
+        <div class="panel" id="panel-prices">
+          <div class="panel-toolbar">
+            <h2 class="panel-title">💰 Price List</h2>
+            <div class="toolbar-right">
+              <select id="price-cat-sel" onchange="ADMIN.renderPriceTable()" class="adm-select">
+                <option value="printing">🖨️ Printing</option>
+                <option value="photo">📷 Photo</option>
+                <option value="travel">✈️ Travel</option>
+                <option value="govt">📄 Govt. Services</option>
+              </select>
+              <button class="adm-btn adm-btn-primary" onclick="ADMIN.openModal('price')">➕ Rate Add</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="adm-table">
+              <thead><tr><th>Service</th><th>Details</th><th>Rate</th><th>Actions</th></tr></thead>
+              <tbody id="adm-price-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── PHOTO LAB ── -->
+        <div class="panel" id="panel-photos">
+          <div class="panel-toolbar">
+            <h2 class="panel-title">📷 Photo Lab Manage</h2>
+            <button class="adm-btn adm-btn-primary" onclick="ADMIN.openModal('photo')">➕ Photo Service Add</button>
+          </div>
+          <div class="item-list" id="adm-photo-list"></div>
+        </div>
+
+        <!-- ── REVIEWS ── -->
+        <div class="panel" id="panel-reviews">
+          <div class="panel-toolbar">
+            <h2 class="panel-title">⭐ Reviews Manage</h2>
+            <button class="adm-btn adm-btn-primary" onclick="ADMIN.openModal('review')">➕ Review Add</button>
+          </div>
+          <div class="item-list" id="adm-rev-list"></div>
+        </div>
+
+        <!-- ── ENQUIRIES ── -->
+        <div class="panel" id="panel-enquiries">
+          <div class="panel-toolbar">
+            <h2 class="panel-title">📩 Customer Enquiries</h2>
+            <button class="adm-btn adm-btn-outline" onclick="ADMIN.loadEnquiries()">🔄 Refresh</button>
+          </div>
+          <div class="table-wrap">
+            <table class="adm-table">
+              <thead><tr><th>Date</th><th>Naam</th><th>Mobile</th><th>Service</th><th>Message</th><th>Status</th></tr></thead>
+              <tbody id="enq-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── CONTACT ── -->
+        <div class="panel" id="panel-contact">
+          <div class="panel-toolbar">
+            <h2 class="panel-title">📞 Contact Info Edit</h2>
+            <button class="adm-btn adm-btn-primary" onclick="ADMIN.saveContactAll()">💾 Sab Save Karein</button>
+          </div>
+          <div class="contact-edit-grid" id="contact-edit-grid">
+            <div class="c-edit-row"><label>Shop Address</label><input type="text" id="ce-address" placeholder="Badhni Chafa, Siddharthnagar, UP"></div>
+            <div class="c-edit-row"><label>Phone Number</label><input type="tel" id="ce-phone" placeholder="+91 XXXXXXXXXX"></div>
+            <div class="c-edit-row"><label>WhatsApp (with country code, no +)</label><input type="text" id="ce-wa" placeholder="91XXXXXXXXXX"></div>
+            <div class="c-edit-row"><label>Email</label><input type="email" id="ce-email" placeholder="your@email.com"></div>
+            <div class="c-edit-row"><label>CSC ID</label><input type="text" id="ce-csc" placeholder="UPXX0000000"></div>
+            <div class="c-edit-row"><label>Google Maps Embed URL (paste full iframe src)</label><input type="text" id="ce-map" placeholder="https://www.google.com/maps/embed?..."></div>
+          </div>
+        </div>
+
+        <!-- ── STATISTICS ── -->
+        <div class="panel" id="panel-stats">
+          <div class="panel-toolbar">
+            <h2 class="panel-title">📈 Statistics Edit Karein</h2>
+            <button class="adm-btn adm-btn-primary" onclick="ADMIN.saveStats()">💾 Save Karein</button>
+          </div>
+          <div class="contact-edit-grid">
+            <div class="c-edit-row"><label>Total Happy Customers</label><input type="text" id="st-customers" placeholder="500+"></div>
+            <div class="c-edit-row"><label>Total Services</label><input type="text" id="st-services" placeholder="20+"></div>
+            <div class="c-edit-row"><label>Tickets Booked</label><input type="text" id="st-tickets" placeholder="5000+"></div>
+            <div class="c-edit-row"><label>Google Rating</label><input type="text" id="st-rating" placeholder="4.9★"></div>
+          </div>
+        </div>
+
+        <!-- ── GENERAL ── -->
+        <div class="panel" id="panel-general">
+          <div class="panel-toolbar">
+            <h2 class="panel-title">⚙️ General Settings</h2>
+            <button class="adm-btn adm-btn-primary" onclick="ADMIN.saveGeneral()">💾 Save Karein</button>
+          </div>
+          <div class="contact-edit-grid">
+            <div class="c-edit-row"><label>Shop / Website Name</label><input type="text" id="gen-name" placeholder="Annu Printing Press"></div>
+            <div class="c-edit-row"><label>Hero Heading</label><input type="text" id="gen-hero" placeholder="Aapki Har Zaroorat..."></div>
+            <div class="c-edit-row"><label>Hero Description</label><textarea id="gen-desc" rows="3" placeholder="Short description..."></textarea></div>
+            <div class="c-edit-row" style="background:#FFF8E1;border-color:#F5B83D;">
+              <label style="color:#856404;">🔑 Password Change (Firebase Console se karo recommended)</label>
+              <p style="font-size:.8rem;color:#856404;margin-top:4px;">Password change karne ke liye Firebase Console → Authentication → Users → Reset Password use karein. Yeh zyada secure hai.</p>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /adm-content -->
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     MODAL
+══════════════════════════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="ADMIN.closeModalOutside(event)">
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <h3 class="modal-title" id="modal-title">Add</h3>
+      <button class="modal-close" onclick="ADMIN.closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot" id="modal-foot"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" role="alert"></div>
+
+<!-- ══════════════════════════════════
+     FIREBASE
+══════════════════════════════════ -->
+<script type="module">
+  import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, limit }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+  /* ──────────────────────────────────────────
+     🔴 SAME CONFIG AS index.html
+  ────────────────────────────────────────── */
+  const firebaseConfig = {
+  apiKey: "AIzaSyBjQ7Zv5uGHrVhQ13wixrVev-7_avdYUNI",
+  authDomain: "annuprintingpress-b17b5.firebaseapp.com",
+  projectId: "annuprintingpress-b17b5",
+  storageBucket: "annuprintingpress-b17b5.firebasestorage.app",
+  messagingSenderId: "810800291445",
+  appId: "1:810800291445:web:ea2645bf0c13520990623c"
+};
+
+  const firebaseApp = initializeApp(firebaseConfig);
+  const db      = getFirestore(firebaseApp);
+  const auth    = getAuth(firebaseApp);
+  const storage = getStorage(firebaseApp);
+
+  window.__DB      = db;
+  window.__AUTH    = auth;
+  window.__STORAGE = storage;
+  window.__FS      = { collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, limit };
+  window.__FA      = { signInWithEmailAndPassword, signOut, onAuthStateChanged };
+
+  document.dispatchEvent(new Event("firebase-ready"));
+</script>
+
+<script src="admin.js"></script>
+</body>
+</html>
