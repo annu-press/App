@@ -1,3 +1,285 @@
+|| '🔧'}" placeholder="🖨️" maxlength="4">
+            <div class="mfg-hint">Koi bhi emoji copy-paste karein</div>
+          </div>
+          <div class="mfg">
+            <label>Badge Text</label>
+            <input type="text" id="m-badge" value="${existing?.badge || ''}" placeholder="Available">
+          </div>
+        </div>
+        <div class="mfg">
+          <label>Service Ka Naam *</label>
+          <input type="text" id="m-name" value="${existing?.name || ''}" placeholder="e.g. Air Ticket Booking">
+        </div>
+        <div class="mfg">
+          <label>Description *</label>
+          <textarea id="m-desc" rows="3" placeholder="Short description jo website pe dikhegi...">${existing?.desc || ''}</textarea>
+        </div>
+      `;
+      foot.innerHTML = `
+        <button class="adm-btn adm-btn-outline" onclick="ADMIN.closeModal()">Cancel</button>
+        <button class="adm-btn adm-btn-primary" onclick="ADMIN.saveService()">💾 Save Karein</button>
+      `;
+    }
+
+    // ── Price Modal ──
+    else if (type === 'price') {
+      const cats = { printing:'🖨️ Printing', photo:'📷 Photo', travel:'✈️ Travel', govt:'📄 Govt.' };
+      const selCat = existing?._cat || document.getElementById('price-cat-sel')?.value || 'printing';
+      title.textContent = isEdit ? '✏️ Rate Edit Karein' : '➕ Naya Rate Add Karein';
+      body.innerHTML = `
+        <div class="mfg">
+          <label>Category *</label>
+          <select id="m-cat">
+            ${Object.entries(cats).map(([k,l]) => `<option value="${k}" ${k===selCat?'selected':''}>${l}</option>`).join('')}
+          </select>
+        </div>
+        <div class="mfg">
+          <label>Service Ka Naam *</label>
+          <input type="text" id="m-svc" value="${existing?.svc || ''}" placeholder="e.g. Color Print">
+        </div>
+        <div class="mfg">
+          <label>Details</label>
+          <input type="text" id="m-detail" value="${existing?.detail || ''}" placeholder="e.g. A4 size, single side">
+        </div>
+        <div class="mfg">
+          <label>Rate *</label>
+          <input type="text" id="m-rate" value="${existing?.rate || ''}" placeholder="e.g. ₹ 5 / page">
+        </div>
+      `;
+      foot.innerHTML = `
+        <button class="adm-btn adm-btn-outline" onclick="ADMIN.closeModal()">Cancel</button>
+        <button class="adm-btn adm-btn-primary" onclick="ADMIN.savePrice()">💾 Save Karein</button>
+      `;
+    }
+
+    // ── Photo Modal ──
+    else if (type === 'photo') {
+      title.textContent = isEdit ? '✏️ Photo Service Edit' : '➕ Photo Service Add';
+      body.innerHTML = `
+        <div class="mfg-row">
+          <div class="mfg">
+            <label>Icon (Emoji) *</label>
+            <input type="text" id="m-ico" value="${existing?.ico || '📷'}" placeholder="📷" maxlength="4">
+          </div>
+          <div class="mfg">
+            <label>Card Background Color</label>
+            <select id="m-bg">
+              ${BG_OPTIONS.map(b => `<option value="${b}" ${(existing?.bg||'bg1')===b?'selected':''}>${b} ${bgLabel(b)}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="mfg">
+          <label>Service Ka Naam *</label>
+          <input type="text" id="m-name" value="${existing?.name || ''}" placeholder="e.g. Passport Photo">
+        </div>
+        <div class="mfg">
+          <label>Description</label>
+          <textarea id="m-desc" rows="3" placeholder="Short description...">${existing?.desc || ''}</textarea>
+        </div>
+      `;
+      foot.innerHTML = `
+        <button class="adm-btn adm-btn-outline" onclick="ADMIN.closeModal()">Cancel</button>
+        <button class="adm-btn adm-btn-primary" onclick="ADMIN.savePhoto()">💾 Save Karein</button>
+      `;
+    }
+
+    // ── Review Modal ──
+    else if (type === 'review') {
+      title.textContent = isEdit ? '✏️ Review Edit Karein' : '➕ Review Add Karein';
+      body.innerHTML = `
+        <div class="mfg-row">
+          <div class="mfg">
+            <label>Customer Ka Naam *</label>
+            <input type="text" id="m-name" value="${existing?.name || ''}" placeholder="e.g. Ramesh Kumar">
+          </div>
+          <div class="mfg">
+            <label>Location</label>
+            <input type="text" id="m-loc" value="${existing?.loc || ''}" placeholder="e.g. Siddharthnagar, UP">
+          </div>
+        </div>
+        <div class="mfg">
+          <label>Stars (1 se 5)</label>
+          <select id="m-stars">
+            ${[5,4,3,2,1].map(n => `<option value="${n}" ${(existing?.stars||5)===n?'selected':''}>${'★'.repeat(n)} (${n})</option>`).join('')}
+          </select>
+        </div>
+        <div class="mfg">
+          <label>Review Text *</label>
+          <textarea id="m-text" rows="4" placeholder="Customer ne kya kaha...">${existing?.text || ''}</textarea>
+        </div>
+        <div class="mfg">
+          <div class="mfg-hint" style="background:#FFF8E1;padding:10px;border-radius:6px;border-left:3px solid #E8A020;">
+            💡 <strong>Tip:</strong> Sirf genuine customer reviews daalo — fake reviews se Google ranking kharab hoti hai.
+          </div>
+        </div>
+      `;
+      foot.innerHTML = `
+        <button class="adm-btn adm-btn-outline" onclick="ADMIN.closeModal()">Cancel</button>
+        <button class="adm-btn adm-btn-primary" onclick="ADMIN.saveReview()">💾 Save Karein</button>
+      `;
+    }
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay')?.classList.remove('open');
+    editingId   = null;
+    editingType = null;
+  }
+
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  }
+
+  /* ══════════════════════════════════════════
+     SAVE FUNCTIONS
+  ══════════════════════════════════════════ */
+
+  /* ── Save Service ── */
+  async function saveService() {
+    const ico   = val('m-ico')  || '🔧';
+    const name  = val('m-name');
+    const desc  = val('m-desc');
+    const badge = val('m-badge');
+    if (!name || !desc) { toast('❌ Naam aur description zaroori hai!'); return; }
+
+    const data = { ico, name, desc, badge };
+    if (editingId) {
+      await updateDoc('services', editingId, data);
+      toast('✅ Service update ho gayi!');
+    } else {
+      await addDoc('services', data);
+      toast('✅ Naya service add ho gaya!');
+    }
+    closeModal();
+    loadServices();
+  }
+
+  /* ── Save Price ── */
+  async function savePrice() {
+    const cat    = val('m-cat') || document.getElementById('price-cat-sel')?.value || 'printing';
+    const svc    = val('m-svc');
+    const detail = val('m-detail');
+    const rate   = val('m-rate');
+    if (!svc || !rate) { toast('❌ Service naam aur rate zaroori!'); return; }
+
+    const sets = await getSettings();
+    if (!sets.prices) sets.prices = {};
+    if (!sets.prices[cat]) sets.prices[cat] = [];
+
+    if (editingId && editingId.includes(':')) {
+      const [, idxStr] = editingId.split(':');
+      const idx = parseInt(idxStr);
+      if (!isNaN(idx)) sets.prices[cat][idx] = { svc, detail, rate };
+    } else {
+      sets.prices[cat].push({ svc, detail, rate });
+    }
+
+    await setSettings({ prices: sets.prices });
+    toast('✅ Rate save ho gaya!');
+    closeModal();
+    await renderPriceTable();
+  }
+
+  /* ── Save Photo ── */
+  async function savePhoto() {
+    const ico  = val('m-ico')  || '📷';
+    const bg   = val('m-bg')   || 'bg1';
+    const name = val('m-name');
+    const desc = val('m-desc');
+    if (!name) { toast('❌ Naam zaroori hai!'); return; }
+
+    const data = { ico, bg, name, desc };
+    if (editingId) {
+      await updateDoc('photos', editingId, data);
+      toast('✅ Photo service update!');
+    } else {
+      await addDoc('photos', data);
+      toast('✅ Photo service add ho gayi!');
+    }
+    closeModal();
+    loadPhotos();
+  }
+
+  /* ── Save Review ── */
+  async function saveReview() {
+    const name  = val('m-name');
+    const loc   = val('m-loc');
+    const stars = parseInt(val('m-stars')) || 5;
+    const text  = val('m-text');
+    if (!name || !text) { toast('❌ Naam aur review text zaroori!'); return; }
+
+    const data = { name, loc, stars, text };
+    if (editingId) {
+      await updateDoc('reviews', editingId, data);
+      toast('✅ Review update ho gayi!');
+    } else {
+      await addDoc('reviews', data);
+      toast('✅ Review add ho gayi!');
+    }
+    closeModal();
+    loadReviews();
+  }
+
+  /* ── Generic Delete ── */
+  async function deleteItem(col, id, reloadFn) {
+    if (!confirm('Yeh item delete karein? Yeh action undo nahi ho sakta.')) return;
+    await deleteDocById(col, id);
+    toast('🗑️ Delete ho gaya!');
+    if (reloadFn) reloadFn();
+  }
+
+  /* ══════════════════════════════════════════
+     UTILITIES
+  ══════════════════════════════════════════ */
+  function val(id) {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+
+  function setValue(id, v) {
+    const el = document.getElementById(id);
+    if (el) el.value = v;
+  }
+
+  function toast(msg, dur = 3000) {
+    const t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
+
+  function fmtDate(ts) {
+    if (!ts?.seconds) return '—';
+    return new Date(ts.seconds * 1000).toLocaleDateString('hi-IN', {
+      day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'
+    });
+  }
+
+  function bgLabel(bg) {
+    const map = { bg1:'(Blue)', bg2:'(Orange)', bg3:'(Green)', bg4:'(Pink)', bg5:'(Purple)', bg6:'(Teal)' };
+    return map[bg] || '';
+  }
+
+  /* ══════════════════════════════════════════
+     PUBLIC API
+  ══════════════════════════════════════════ */
+  return {
+    boot,
+    login, logout, togglePwd,
+    showPanel, toggleSidebar,
+    openModal, closeModal, closeModalOutside,
+    saveService, savePrice, savePhoto, saveReview,
+    deleteItem, deletePrice,
+    saveContactAll, saveStats, saveGeneral,
+    loadEnquiries, markEnqSeen,
+    renderPriceTable,
+  };
+
+})();
+
+/* ── Start ── */
+document.addEventListener('DOMContentLoaded', ADMIN.boot);
 /* ═══════════════════════════════════════════════════
    ANNU PRINTING PRESS — ADMIN PANEL JS
    File: admin.js
@@ -69,12 +351,15 @@ const ADMIN = (() => {
       await FA.signInWithEmailAndPassword(auth, email, pass);
     } catch (e) {
       const msgs = {
-        'auth/wrong-password':   '❌ Galat password!',
-        'auth/user-not-found':   '❌ Email registered nahi hai!',
-        'auth/invalid-email':    '❌ Email format galat hai!',
-        'auth/too-many-requests':'❌ Bahut zyada attempts — thodi der baad try karein.',
+        'auth/wrong-password':      '❌ Galat password!',
+        'auth/user-not-found':      '❌ Email registered nahi hai!',
+        'auth/invalid-email':       '❌ Email format galat hai!',
+        'auth/invalid-credential':  '❌ Email ya password galat hai! Sahi credentials daalo.',
+        'auth/user-disabled':       '❌ Yeh account disable kar diya gaya hai.',
+        'auth/too-many-requests':   '❌ Bahut zyada attempts — thodi der baad try karein.',
+        'auth/network-request-failed': '❌ Internet connection check karein!',
       };
-      err.textContent = msgs[e.code] || '❌ Login fail hua. Dobara try karein.';
+      err.textContent = msgs[e.code] || `❌ Login fail hua. (${e.code})`;
       btn.textContent = '🔐 Login';
       btn.disabled    = false;
     }
@@ -519,244 +804,4 @@ const ADMIN = (() => {
         </div>
         <div class="mfg">
           <label>Details</label>
-          <input type="text" id="m-detail" value="${existing?.detail || ''}" placeholder="e.g. A4 size, single side">
-        </div>
-        <div class="mfg">
-          <label>Rate *</label>
-          <input type="text" id="m-rate" value="${existing?.rate || ''}" placeholder="e.g. ₹ 5 / page">
-        </div>
-      `;
-      foot.innerHTML = `
-        <button class="adm-btn adm-btn-outline" onclick="ADMIN.closeModal()">Cancel</button>
-        <button class="adm-btn adm-btn-primary" onclick="ADMIN.savePrice()">💾 Save Karein</button>
-      `;
-    }
-
-    // ── Photo Modal ──
-    else if (type === 'photo') {
-      title.textContent = isEdit ? '✏️ Photo Service Edit' : '➕ Photo Service Add';
-      body.innerHTML = `
-        <div class="mfg-row">
-          <div class="mfg">
-            <label>Icon (Emoji) *</label>
-            <input type="text" id="m-ico" value="${existing?.ico || '📷'}" placeholder="📷" maxlength="4">
-          </div>
-          <div class="mfg">
-            <label>Card Background Color</label>
-            <select id="m-bg">
-              ${BG_OPTIONS.map(b => `<option value="${b}" ${(existing?.bg||'bg1')===b?'selected':''}>${b} ${bgLabel(b)}</option>`).join('')}
-            </select>
-          </div>
-        </div>
-        <div class="mfg">
-          <label>Service Ka Naam *</label>
-          <input type="text" id="m-name" value="${existing?.name || ''}" placeholder="e.g. Passport Photo">
-        </div>
-        <div class="mfg">
-          <label>Description</label>
-          <textarea id="m-desc" rows="3" placeholder="Short description...">${existing?.desc || ''}</textarea>
-        </div>
-      `;
-      foot.innerHTML = `
-        <button class="adm-btn adm-btn-outline" onclick="ADMIN.closeModal()">Cancel</button>
-        <button class="adm-btn adm-btn-primary" onclick="ADMIN.savePhoto()">💾 Save Karein</button>
-      `;
-    }
-
-    // ── Review Modal ──
-    else if (type === 'review') {
-      title.textContent = isEdit ? '✏️ Review Edit Karein' : '➕ Review Add Karein';
-      body.innerHTML = `
-        <div class="mfg-row">
-          <div class="mfg">
-            <label>Customer Ka Naam *</label>
-            <input type="text" id="m-name" value="${existing?.name || ''}" placeholder="e.g. Ramesh Kumar">
-          </div>
-          <div class="mfg">
-            <label>Location</label>
-            <input type="text" id="m-loc" value="${existing?.loc || ''}" placeholder="e.g. Siddharthnagar, UP">
-          </div>
-        </div>
-        <div class="mfg">
-          <label>Stars (1 se 5)</label>
-          <select id="m-stars">
-            ${[5,4,3,2,1].map(n => `<option value="${n}" ${(existing?.stars||5)===n?'selected':''}>${'★'.repeat(n)} (${n})</option>`).join('')}
-          </select>
-        </div>
-        <div class="mfg">
-          <label>Review Text *</label>
-          <textarea id="m-text" rows="4" placeholder="Customer ne kya kaha...">${existing?.text || ''}</textarea>
-        </div>
-        <div class="mfg">
-          <div class="mfg-hint" style="background:#FFF8E1;padding:10px;border-radius:6px;border-left:3px solid #E8A020;">
-            💡 <strong>Tip:</strong> Sirf genuine customer reviews daalo — fake reviews se Google ranking kharab hoti hai.
-          </div>
-        </div>
-      `;
-      foot.innerHTML = `
-        <button class="adm-btn adm-btn-outline" onclick="ADMIN.closeModal()">Cancel</button>
-        <button class="adm-btn adm-btn-primary" onclick="ADMIN.saveReview()">💾 Save Karein</button>
-      `;
-    }
-  }
-
-  function closeModal() {
-    document.getElementById('modal-overlay')?.classList.remove('open');
-    editingId   = null;
-    editingType = null;
-  }
-
-  function closeModalOutside(e) {
-    if (e.target === document.getElementById('modal-overlay')) closeModal();
-  }
-
-  /* ══════════════════════════════════════════
-     SAVE FUNCTIONS
-  ══════════════════════════════════════════ */
-
-  /* ── Save Service ── */
-  async function saveService() {
-    const ico   = val('m-ico')  || '🔧';
-    const name  = val('m-name');
-    const desc  = val('m-desc');
-    const badge = val('m-badge');
-    if (!name || !desc) { toast('❌ Naam aur description zaroori hai!'); return; }
-
-    const data = { ico, name, desc, badge };
-    if (editingId) {
-      await updateDoc('services', editingId, data);
-      toast('✅ Service update ho gayi!');
-    } else {
-      await addDoc('services', data);
-      toast('✅ Naya service add ho gaya!');
-    }
-    closeModal();
-    loadServices();
-  }
-
-  /* ── Save Price ── */
-  async function savePrice() {
-    const cat    = val('m-cat') || document.getElementById('price-cat-sel')?.value || 'printing';
-    const svc    = val('m-svc');
-    const detail = val('m-detail');
-    const rate   = val('m-rate');
-    if (!svc || !rate) { toast('❌ Service naam aur rate zaroori!'); return; }
-
-    const sets = await getSettings();
-    if (!sets.prices) sets.prices = {};
-    if (!sets.prices[cat]) sets.prices[cat] = [];
-
-    if (editingId && editingId.includes(':')) {
-      const [, idxStr] = editingId.split(':');
-      const idx = parseInt(idxStr);
-      if (!isNaN(idx)) sets.prices[cat][idx] = { svc, detail, rate };
-    } else {
-      sets.prices[cat].push({ svc, detail, rate });
-    }
-
-    await setSettings({ prices: sets.prices });
-    toast('✅ Rate save ho gaya!');
-    closeModal();
-    await renderPriceTable();
-  }
-
-  /* ── Save Photo ── */
-  async function savePhoto() {
-    const ico  = val('m-ico')  || '📷';
-    const bg   = val('m-bg')   || 'bg1';
-    const name = val('m-name');
-    const desc = val('m-desc');
-    if (!name) { toast('❌ Naam zaroori hai!'); return; }
-
-    const data = { ico, bg, name, desc };
-    if (editingId) {
-      await updateDoc('photos', editingId, data);
-      toast('✅ Photo service update!');
-    } else {
-      await addDoc('photos', data);
-      toast('✅ Photo service add ho gayi!');
-    }
-    closeModal();
-    loadPhotos();
-  }
-
-  /* ── Save Review ── */
-  async function saveReview() {
-    const name  = val('m-name');
-    const loc   = val('m-loc');
-    const stars = parseInt(val('m-stars')) || 5;
-    const text  = val('m-text');
-    if (!name || !text) { toast('❌ Naam aur review text zaroori!'); return; }
-
-    const data = { name, loc, stars, text };
-    if (editingId) {
-      await updateDoc('reviews', editingId, data);
-      toast('✅ Review update ho gayi!');
-    } else {
-      await addDoc('reviews', data);
-      toast('✅ Review add ho gayi!');
-    }
-    closeModal();
-    loadReviews();
-  }
-
-  /* ── Generic Delete ── */
-  async function deleteItem(col, id, reloadFn) {
-    if (!confirm('Yeh item delete karein? Yeh action undo nahi ho sakta.')) return;
-    await deleteDocById(col, id);
-    toast('🗑️ Delete ho gaya!');
-    if (reloadFn) reloadFn();
-  }
-
-  /* ══════════════════════════════════════════
-     UTILITIES
-  ══════════════════════════════════════════ */
-  function val(id) {
-    const el = document.getElementById(id);
-    return el ? el.value.trim() : '';
-  }
-
-  function setValue(id, v) {
-    const el = document.getElementById(id);
-    if (el) el.value = v;
-  }
-
-  function toast(msg, dur = 3000) {
-    const t = document.getElementById('toast');
-    if (!t) return;
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), dur);
-  }
-
-  function fmtDate(ts) {
-    if (!ts?.seconds) return '—';
-    return new Date(ts.seconds * 1000).toLocaleDateString('hi-IN', {
-      day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'
-    });
-  }
-
-  function bgLabel(bg) {
-    const map = { bg1:'(Blue)', bg2:'(Orange)', bg3:'(Green)', bg4:'(Pink)', bg5:'(Purple)', bg6:'(Teal)' };
-    return map[bg] || '';
-  }
-
-  /* ══════════════════════════════════════════
-     PUBLIC API
-  ══════════════════════════════════════════ */
-  return {
-    boot,
-    login, logout, togglePwd,
-    showPanel, toggleSidebar,
-    openModal, closeModal, closeModalOutside,
-    saveService, savePrice, savePhoto, saveReview,
-    deleteItem, deletePrice,
-    saveContactAll, saveStats, saveGeneral,
-    loadEnquiries, markEnqSeen,
-    renderPriceTable,
-  };
-
-})();
-
-/* ── Start ── */
-document.addEventListener('DOMContentLoaded', ADMIN.boot);
+          <input type="text" id="m-detail" value="${existing?.detail 
